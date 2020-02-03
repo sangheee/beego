@@ -16,11 +16,13 @@ package logs
 
 import (
 	"bytes"
-	"strings"
 	"encoding/json"
 	"fmt"
+	"strings"
 	"time"
 )
+
+var accessBeeLogger *BeeLogger
 
 const (
 	apacheFormatPattern = "%s - - [%s] \"%s %d %d\" %f %s %s"
@@ -79,5 +81,16 @@ func AccessLog(r *AccessLogRecord, format string) {
 			msg = string(jsonData)
 		}
 	}
-	beeLogger.writeMsg(levelLoggerImpl, strings.TrimSpace(msg))
+	logger := beeLogger
+	if accessBeeLogger != nil {
+		logger = accessBeeLogger
+	}
+	logger.writeMsg(levelLoggerImpl, strings.TrimSpace(msg))
+}
+
+func SetAccessLogger(adapter string, config ...string) error {
+	if accessBeeLogger == nil {
+		accessBeeLogger = NewLogger()
+	}
+	return accessBeeLogger.SetLogger(adapter, config...)
 }
