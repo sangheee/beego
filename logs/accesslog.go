@@ -30,6 +30,10 @@ const (
 	jsonFormat          = "JSON_FORMAT"
 )
 
+var (
+	ApacheTimeFormat = "02/Jan/2006 03:04:05"
+)
+
 // AccessLogRecord struct for holding access log data.
 type AccessLogRecord struct {
 	RemoteAddr     string        `json:"remote_addr"`
@@ -68,7 +72,7 @@ func AccessLog(r *AccessLogRecord, format string) {
 	var msg string
 	switch format {
 	case apacheFormat:
-		timeFormatted := r.RequestTime.Format("02/Jan/2006 03:04:05")
+		timeFormatted := r.RequestTime.Format(ApacheTimeFormat)
 		msg = fmt.Sprintf(apacheFormatPattern, r.RemoteAddr, timeFormatted, r.Request, r.Status, r.BodyBytesSent,
 			r.ElapsedTime.Seconds(), r.HTTPReferrer, r.HTTPUserAgent)
 	case jsonFormat:
